@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost & Found Portal</title>
+    <link rel="stylesheet" href="style.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Additional CSS for dropdown fix */
+        .nav-dropdown {
+            position: relative;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            z-index: 1000;
+            padding: 8px 0;
+        }
+        
+        .nav-dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        .dropdown-content a {
+            display: block;
+            padding: 10px 16px;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.2s;
+        }
+        
+        .dropdown-content a:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Ensure dropdown stays open when hovering over it */
+        .nav-dropdown:hover .dropdown-content,
+        .dropdown-content:hover {
+            display: block;
+        }
+
+        /* Avatar styles for header */
+        .account-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            overflow: hidden;
+            position: relative;
+            border-radius: 50%;
+            border: 3px solid #007BFF;
+        }
+        
+        .account-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .account-icon .fa-user {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-0%, -50%);
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            display: block;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            margin-right: 15px;
+            overflow: hidden;
+            position: relative;
+            border-radius: 50%;
+            border: 3px solid #007BFF;
+        }
+        
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        
+        .user-avatar .fa-user {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Welcome message styles */
+        .welcome-message {
+            display: none;
+            margin-left: 25px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #007BFF;
+            padding: 5px 0;
+        }
+
+        .welcome-message.active {
+            display: block;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Item type colors */
+        .item-type.lost {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .item-type.found {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .item-type {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        /* Image preview styles */
+        .item-image-preview {
+            cursor: pointer;
+            color: #007BFF;
+            margin-top: 10px;
+            padding: 5px 10px;
+            border: 1px solid #007BFF;
+            border-radius: 5px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .item-image-preview:hover {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .image-preview-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-preview-modal.active {
+            display: flex;
+        }
+
+        .image-preview-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .image-preview-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .close-preview {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-preview:hover {
+            color: #ff6b6b;
+        }
+
+        @media (max-width: 768px) {
+            .welcome-message {
+                font-size: 0.9rem;
+                margin-left: 10px;
+            }
+            
+            .image-preview-content {
+                max-width: 95%;
+            }
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007BFF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-search-location" style="color: #007BFF;"></i>
+                    <a href="index.html"><span>Lost & Found Hub</span></a>
+                </div>
+                <div class="welcome-message" id="welcomeMessage">
+                    <!-- Welcome message will be inserted here dynamically -->
+                </div>
+            </div>
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="submit-item.html" id="navSubmitItem" aria-label="Submit Item"><i class="fas fa-plus-circle"></i> Submit Item</a></li>
+                    <li class="nav-dropdown">
+                        <a href="#" class="dropdown-toggle"> 
+                            <i class="fas fa-info-circle"></i> More info <i class="fas fa-caret-down"></i>
+                        </a>
+                        <div class="dropdown-content">
+                            <a href="#about-us" aria-label="About Us"> <i class="fas fa-users"></i> About Us</a>
+                            <a href="#reviews" aria-label="Reviews"><i class="fas fa-comments"></i> Reviews</a>
+                            <a href="#team" aria-label="Our Team"><i class="fas fa-cloud cloud-icon"></i> Our Team</a>
+                            <a href="#statistics" aria-label="Statistics"><i class="fas fa-chart-bar"></i> Statistics</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+            <div class="account-section" id="accountSection" style="display: none;">
+                <div class="account-icon" id="accountIcon">
+                    <i class="fas fa-user" id="accountIconFallback"></i>
+                    <img id="accountIconImage" alt="User Avatar">
+                </div>
+                <div class="dropdown" id="accountDropdown">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <i class="fas fa-user" id="dropdownAvatarFallback"></i>
+                            <img id="dropdownAvatarImage" alt="User Avatar">
+                        </div>
+                        <div class="user-details">
+                            <h3 id="username">Username</h3>
+                            <p id="useremail">user@example.com</p>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu">
+                        <li><a href="profile.html" id="profileLink"><i class="fas fa-user-circle"></i> Your Profile</a></li>
+                        <li><a href="submit-item.html" id="dropdownSubmitItem" aria-label="Submit Item"><i class="fas fa-plus-circle"></i> Submit Item</a></li>
+                        <li><a href="help.html"><i class="fas fa-question-circle"></i> Help & Support</a></li>
+                        <li><a href="#"><i class="fas fa-bell"></i> Notifications</a></li>
+                        <li><a href="contact.html" aria-label="Home"><i class="fas fa-phone"></i> Contact</a></li>
+                        <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+                        <li><a href="login.html" id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+            <button class="hamburger-menu" id="hamburgerMenu" role="button" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Image Preview Modal -->
+    <div class="image-preview-modal" id="imagePreviewModal">
+        <div class="image-preview-content">
+            <button class="close-preview" id="closePreview">&times;</button>
+            <img id="previewImage" alt="Item Image Preview">
+        </div>
+    </div>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1>Lost something? Found something? We can help!</h1>
+            <p>Browse through reported lost and found items. Your campus community is here to help.</p>
+            <a href="submit-item.html" class="btn btn-primary" aria-label="Report an Item Now">Report an Item Now</a>
+        </section>
+        
+        <!-- Filter/Search Section -->
+        <section class="filter-search-section">
+            <div class="search-bar">
+                <input type="text" id="searchKeyword" placeholder="Search by item name or description..." aria-label="Search keyword">
+                <button class="btn btn-primary" id="searchBtn" aria-label="Search"><i class="fas fa-search"></i> Search</button>
+            </div>
+            <div class="filters">
+                <select id="itemTypeFilter" aria-label="Filter by item type">
+                    <option value="">All Types</option>
+                    <option value="Lost">Lost</option>
+                    <option value="Found">Found</option>
+                </select>
+                <select id="categoryFilter" aria-label="Filter by category">
+                    <option value="">All Categories</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="ID Cards">ID Cards</option>
+                    <option value="Wallets">Wallets</option>
+                    <option value="Books">Books</option>
+                    <option value="Clothing">Clothing</option>
+                    <option value="Keys">Keys</option>
+                    <option value="Other">Other</option>
+                </select>
+                <button class="btn btn-outline" id="resetFiltersBtn" aria-label="Reset Filters"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+        </section>
+
+        <!-- Item Listings -->
+        <section class="item-listings">
+            <h2>Recently Reported Items</h2>
+            <div id="itemListings" class="item-grid">
+                <div class="item-card skeleton"></div>
+                <div class="item-card skeleton"></div>
+                <div class="item-card skeleton"></div>
+                <div class="item-card skeleton"></div>
+            </div>
+            <p id="noItemsMessage" class="info-message" style="display:none;">No items found matching your criteria.</p>
+            <div id="loadingMessage" class="info-message" style="display:none;">
+                <div class="loading-spinner"></div> Loading items...
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about-us" class="about-section">
+            <h2>About Lost & Found Hub</h2>
+            <p class="subtitle">
+                We are dedicated to reuniting people with their cherished belongings. Our platform leverages community and technology to make finding lost items simpler and more efficient for everyone. <br>
+                <a href="success_galary.html" style="text-decoration:none;"><span style="color:#007BFF;" ><strong>Do visit Our Success Gallery</strong> <i class="fas fa-external-link-alt"></i></span></a>
+            </p>
+
+            <div class="mission-vision-wrapper">
+                <div class="info-card">
+                    <i class="fas fa-bullseye"></i>
+                    <h2>Our Mission</h2>
+                    <p>To provide a centralized, user-friendly platform that connects individuals who have lost items with the kind-hearted people who have found them, fostering a community of trust and support.</p>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-eye"></i>
+                    <h2>Our Vision</h2>
+                    <p>To become the most reliable and effective digital lost and found service, minimizing the stress of losing personal items and maximizing the joy of successful reunions.</p>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number">20</span>
+                    <span class="stat-label">Items Reunited</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">24</span>
+                    <span class="stat-label">Community Members</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">94%</span>
+                    <span class="stat-label">Success Rate</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reviews -->
+        <section id="reviews" class="success-stories">
+            <h2>What our Users says</h2>
+            <div class="stories-grid">
+                <div class="story-card">
+                    <i class="fas fa-quote-right quote-icon"></i>
+                    <p>"I never thought I'd see my wallet again after losing it on campus. Within a day of posting on this Hub, someone contacted me! I am incredibly grateful for this amazing service."</p>
+                    <div class="user-info">
+                        <div class="user-details">
+                            <h4>Priya Sharma</h4>
+                            <span>Found her Wallet</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="story-card">
+                    <i class="fas fa-quote-right quote-icon"></i>
+                    <p>"My daughter lost her favorite textbook. Thanks to the Lost & Found Hub, a student from another department found it and we got it back the same week. It saved us time and money!"</p>
+                    <div class="user-info">
+                        <div class="user-details">
+                            <h4>Ankit Desai</h4>
+                            <span>Recovered a Textbook</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="story-card">
+                    <i class="fas fa-quote-right quote-icon"></i>
+                    <p>"Finding a lost phone felt like a big responsibility. I posted it here, and the owner contacted me in just a few hours. The process was so easy and secure. Glad I could help!"</p>
+                    <div class="user-info">
+                        <div class="user-details">
+                            <h4>Rohan Verma</h4>
+                            <span>Returned a Lost Phone</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section class="team-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Meet Our Team</h2>
+                    <p>The dedicated people working behind the scenes to make Lost & Found Hub successful.</p>
+                </div>
+                <div class="team-grid">
+                    <div class="team-member">
+                        <div class="member-image">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80" alt="Alex Johnson">
+                        </div>
+                        <h3 class="member-name">Alex Johnson</h3>
+                        <p class="member-role">Founder & CEO</p>
+                        <p class="member-bio">Alex started Lost & Found Hub after his own frustrating experience losing a family heirloom.</p>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-image">
+                            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80" alt="Sarah Chen">
+                        </div>
+                        <h3 class="member-name">Sarah Chen</h3>
+                        <p class="member-role">Head of Operations</p>
+                        <p class="member-bio">Sarah ensures our platform runs smoothly and our users have the best experience possible.</p>
+                    </div>
+                    <div id="team" class="team-member">
+                        <div class="member-image">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80" alt="Michael Rodriguez">
+                        </div>
+                        <h3 class="member-name">Michael Rodriguez</h3>
+                        <p class="member-role">Lead Developer</p>
+                        <p class="member-bio">Michael builds and maintains the technology that powers our matching algorithms.</p>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-image">
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&h=400&q=80" alt="Emily Watson">
+                        </div>
+                        <h3 class="member-name">Emily Watson</h3>
+                        <p class="member-role">Community Manager</p>
+                        <p class="member-bio">Emily engages with our community and helps facilitate successful reunions.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics Section -->
+        <section id="statistics">
+            <h2>Our Impact</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-box-open"></i>
+                    <p id="totalItemsCount">0</p>
+                    <h3>Total Items Reported</h3>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-handshake"></i>
+                    <p id="claimedItemsCount">0</p>
+                    <h3>Items Claimed</h3>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-check-circle"></i>
+                    <p id="resolvedItemsCount">0</p>
+                    <h3>Items Resolved</h3>
+                </div>
+            </div>
+            <p class="note">These statistics are updated in real-time as items are reported and resolved.</p>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Lost & Found Hub</h3>
+                    <p>Reuniting people with their lost belongings through technology and community.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="#about-us">About Us</a></li>
+                        <li><a href="submit-item.html">Submit Item</a></li>
+                        <li><a href="work.html">Our Success Gallery</a></li>
+                        <li><a href="#searchKeyword">Browse Items</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="help.html">Help & Support</a></li>
+                        <li><a href="help.html#faq">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="#" id="privacyLink" aria-label="Privacy Policy">Privacy Policy</a></li>
+                        <li><a href="#" id="serviceLink" aria-label="Terms of Service">Terms of Service</a></li>
+                        <li><a href="#" id="termsLink" aria-label="Terms & Conditions">Terms & Conditions</a></li> 
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Lost & Found Hub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+
+    <div class="modal" id="privacyModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 style="color:#007BFF;">Lost & Found Hub - Privacy Policy</h3>
+          <button class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+                <h4>1. Information We Collect</h4>
+                <p>To provide our lost and found matching services, we collect:
+                    <ul>
+                        <li>Account information (name, email, contact details)</li>
+                        <li>Item descriptions and photos you choose to share</li>
+                        <li>Location data to help match lost and found items geographically</li>
+                        <li>Communication history between users regarding items</li>
+                        <li>Technical data (IP address, browser type, device information)</li>
+                    </ul>
+                </p>
+                
+                <h4>2. How We Use Your Information</h4>
+                <p>We use collected information to:
+                    <ul>
+                        <li>Match lost items with found items in your area</li>
+                        <li>Facilitate communication between users</li>
+                        <li>Improve our matching algorithms and user experience</li>
+                        <li>Send notifications about potential matches</li>
+                        <li>Ensure platform security and prevent fraud</li>
+                        <li>Comply with legal obligations</li>
+                    </ul>
+                </p>
+                
+                <h4>3. Item Information Sharing</h4>
+                <p>To help reunite items with their owners, we may share:
+                    <ul>
+                        <li>Item descriptions and photos with other users in your area</li>
+                        <li>General location data (neighborhood/city level, not exact addresses)</li>
+                        <li>Contact method you choose to share (platform messaging or provided contact info)</li>
+                    </ul>
+                    We never share your exact address, phone number, or personal financial information without your explicit consent.
+                </p>
+                
+                <h4>4. Data Security</h4>
+                <p>We implement security measures to protect your information:
+                    <ul>
+                        <li>Encryption of sensitive data in transit and at rest</li>
+                        <li>Regular security assessments and updates</li>
+                        <li>Limited employee access to user data</li>
+                        <li>Secure authentication procedures</li>
+                    </ul>
+                </p>
+                
+                <h4>5. Your Privacy Choices</h4>
+                <p>You can:
+                    <ul>
+                        <li>Adjust visibility settings for your listings</li>
+                        <li>Choose which contact methods to share</li>
+                        <li>Delete your account and associated data</li>
+                        <li>Opt-out of non-essential communications</li>
+                        <li>Request access to your personal data</li>
+                    </ul>
+                </p>
+                
+                <h4>6. Location Data</h4>
+                <p>We use location information to:
+                    <ul>
+                        <li>Show relevant lost and found items in your area</li>
+                        <li>Improve matching accuracy</li>
+                        <li>Provide location-based notifications</li>
+                    </ul>
+                    You can control location sharing through your device settings and our app permissions.
+                </p>
+                
+                <h4>7. Data Retention</h4>
+                <p>We retain your information:
+                    <ul>
+                        <li>While your account is active</li>
+                        <li>For resolved item listings: 90 days after resolution</li>
+                        <li>For unresolved listings: Until you delete them or 1 year</li>
+                        <li>As required by law for legal compliance</li>
+                    </ul>
+                </p>
+                
+                <h4>8. Changes to Privacy Policy</h4>
+                <p>We will notify users of significant changes to our privacy practices. Continued use of Lost & Found Hub after changes constitutes acceptance of the updated policy.</p>
+                
+                <h4>9. Contact Us</h4>
+                <p>For privacy-related questions or concerns, please contact our privacy team at privacy@lostfoundhub.com</p>
+            </div>
+      </div>
+    </div>
+
+    <div class="modal" id="serviceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="color: #007BFF;">Lost & Found Hub - Terms of Service</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4>1. Our Service</h4>
+                <p>Welcome to Lost & Found Hub. Our service provides a platform to help users post and search for lost and found items within a specific community. We aim to facilitate the return of belongings but do not participate in the exchange or guarantee outcomes.</p>
+                <h4>2. User Accounts</h4>
+                <p>To post an item, you may be required to create an account. You agree to provide truthful information and are responsible for maintaining the confidentiality of your account password. You are solely responsible for all activities that occur under your account.</p>
+                <h4>3. Acceptable Use Policy</h4>
+                <p>You agree not to use the service to post false or misleading information, harass other users, or post unlawful content.</p>
+                <h4>4. User-Generated Content</h4>
+                <p>You retain ownership of the content you post. However, by posting, you grant Lost & Found Hub a license to display that content on our platform for the purpose of operating the service.</p>
+                <h4>5. Termination</h4>
+                <p>We reserve the right to suspend or terminate your access to the service at our discretion for any conduct that violates these terms.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="termsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Lost & Found Hub - Terms & Conditions</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body">
+                <h4>1. Acceptance of Terms</h4>
+                <p>By accessing and using Lost & Found Hub, you accept and agree to be bound by these Terms & Conditions. Our platform connects people who have lost items with those who have found them.</p>
+                
+                <h4>2. User Responsibilities</h4>
+                <p>As a user of Lost & Found Hub, you agree to:
+                    <ul>
+                        <li>Provide accurate information about lost or found items</li>
+                        <li>Respond promptly to legitimate inquiries about your listings</li>
+                        <li>Treat other users with respect and courtesy</li>
+                        <li>Not list prohibited or illegal items</li>
+                        <li>Verify ownership before returning found items</li>
+                    </ul>
+                </p>
+                
+                <h4>3. Item Listings and Verification</h4>
+                <p>Lost & Found Hub serves as a connection platform only. We do not:
+                    <ul>
+                        <li>Verify the accuracy of user listings</li>
+                        <li>Guarantee the return of lost items</li>
+                        <li>Take possession of any lost or found items</li>
+                        <li>Mediate disputes between users</li>
+                    </ul>
+                    Users are responsible for verifying ownership through reasonable means before transferring items.
+                </p>
+                
+                <h4>4. Prohibited Items</h4>
+                <p>You may not list the following items on our platform:
+                    <ul>
+                        <li>Weapons, firearms, or ammunition</li>
+                        <li>Illegal substances or drugs</li>
+                        <li>Hazardous materials</li>
+                        <li>Stolen property</li>
+                        <li>Perishable items</li>
+                        <li>Animals or pets</li>
+                    </ul>
+                </p>
+                
+                <h4>5. Safe Exchange Guidelines</h4>
+                <p>For your safety, we recommend:
+                    <ul>
+                        <li>Meeting in public, well-lit areas</li>
+                        <li>Bringing a friend or family member</li>
+                        <li>Verifying the item matches the description</li>
+                        <li>Not sharing personal financial information</li>
+                        <li>Reporting suspicious activity to local authorities</li>
+                    </ul>
+                </p>
+                
+                <h4>6. Limitation of Liability</h4>
+                <p>Lost & Found Hub is not responsible for:
+                    <ul>
+                        <li>Items that are not returned or claimed</li>
+                        <li>Misrepresentation of items by users</li>
+                        <li>User interactions or exchanges</li>
+                        <li>Damages or losses resulting from platform use</li>
+                        <li>Technical issues that may temporarily limit access</li>
+                    </ul>
+                </p>
+                
+                <h4>7. Account Termination</h4>
+                <p>We reserve the right to suspend or terminate accounts that:
+                    <ul>
+                        <li>Violate these terms and conditions</li>
+                        <li>Engage in fraudulent or suspicious activity</li>
+                        <li>Harass other users</li>
+                        <li>Repeatedly post inaccurate information</li>
+                    </ul>
+                </p>
+                
+                <h4>8. Changes to Terms</h4>
+                <p>We may update these Terms & Conditions periodically. Continued use of Lost & Found Hub after changes constitutes acceptance of the modified terms.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- UI Elements ---
+            const accountIcon = document.getElementById('accountIcon');
+            const accountDropdown = document.getElementById('accountDropdown');
+            const hamburgerMenu = document.getElementById('hamburgerMenu');
+            const mainNav = document.getElementById('mainNav');
+            const accountSection = document.getElementById('accountSection');
+            const navSubmitItem = document.getElementById('navSubmitItem');
+            const dropdownUsername = document.getElementById('username');
+            const dropdownUserEmail = document.getElementById('useremail');
+            const logoutButton = document.getElementById('logoutBtn');
+            const accountIconImage = document.getElementById('accountIconImage');
+            const accountIconFallback = document.getElementById('accountIconFallback');
+            const dropdownAvatarImage = document.getElementById('dropdownAvatarImage');
+            const dropdownAvatarFallback = document.getElementById('dropdownAvatarFallback');
+            const welcomeMessage = document.getElementById('welcomeMessage');
+
+            // Image Preview Elements
+            const imagePreviewModal = document.getElementById('imagePreviewModal');
+            const previewImage = document.getElementById('previewImage');
+            const closePreview = document.getElementById('closePreview');
+
+            // Function to update avatars in header
+            function updateHeaderAvatars(avatarUrl) {
+                if (avatarUrl && avatarUrl !== '') {
+                    // Update account icon
+                    accountIconImage.src = avatarUrl;
+                    accountIconImage.style.display = 'block';
+                    accountIconFallback.style.display = 'none';
+                    
+                    // Update dropdown avatar
+                    dropdownAvatarImage.src = avatarUrl;
+                    dropdownAvatarImage.style.display = 'block';
+                    dropdownAvatarFallback.style.display = 'none';
+                } else {
+                    // Show fallback icons if no avatar
+                    accountIconImage.style.display = 'none';
+                    accountIconFallback.style.display = 'block';
+                    dropdownAvatarImage.style.display = 'none';
+                    dropdownAvatarFallback.style.display = 'block';
+                }
+            }
+
+            // Function to update welcome message
+            function updateWelcomeMessage(username) {
+                if (username && username !== '') {
+                    welcomeMessage.textContent = `Welcome, ${username}`;
+                    welcomeMessage.classList.add('active');
+                } else {
+                    welcomeMessage.classList.remove('active');
+                }
+            }
+
+            // --- Image Preview Functions ---
+            function openImagePreview(imageUrl) {
+                previewImage.src = imageUrl;
+                imagePreviewModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeImagePreview() {
+                imagePreviewModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+
+            // Event listeners for image preview
+            closePreview.addEventListener('click', closeImagePreview);
+
+            // Close preview when clicking on backdrop
+            imagePreviewModal.addEventListener('click', (e) => {
+                if (e.target === imagePreviewModal) {
+                    closeImagePreview();
+                }
+            });
+
+            // Keyboard navigation for image preview
+            document.addEventListener('keydown', (e) => {
+                if (imagePreviewModal.classList.contains('active') && e.key === 'Escape') {
+                    closeImagePreview();
+                }
+            });
+
+            // --- Dropdown Logic ---
+            accountIcon.addEventListener('click', e => { e.stopPropagation(); accountDropdown.classList.toggle('active'); });
+            document.addEventListener('click', e => { if (!accountDropdown.contains(e.target) && !accountIcon.contains(e.target)) accountDropdown.classList.remove('active'); });
+
+            // --- Hamburger Menu ---
+            hamburgerMenu.addEventListener('click', () => mainNav.classList.toggle('active'));
+
+            // --- Firebase Config ---
+            const firebaseConfig = {};
+            let auth;
+            if (Object.keys(firebaseConfig).length > 0) {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        accountSection.style.display = 'block';
+                        navSubmitItem.href = 'submit-item.html';
+                        document.getElementById('dropdownSubmitItem').href = 'submit-item.html';
+                        const username = user.displayName || user.email.split('@')[0];
+                        dropdownUsername.textContent = username;
+                        dropdownUserEmail.textContent = user.email;
+                        updateWelcomeMessage(username);
+                    } else {
+                        accountSection.style.display = 'none';
+                        navSubmitItem.href = 'login.html';
+                        document.getElementById('dropdownSubmitItem').href = 'login.html';
+                        updateWelcomeMessage('');
+                    }
+                });
+            } else {
+                accountSection.style.display = 'block';
+            }
+
+            // --- Logout ---
+            logoutButton.addEventListener('click', async (e) => {
+                e.preventDefault();
+                accountDropdown.classList.remove('active');
+
+                try {
+                    if (auth) {
+                        await signOut(auth); // Firebase sign out
+                    }
+                } catch (err) {
+                    console.error("Logout error:", err);
+                } finally {
+                    // Always redirect to login.html after logout
+                    window.location.href = 'login.html';
+                }
+            });
+
+            // --- Fetch Profile ---
+            async function fetchProfile() {
+                try {
+                    const token = localStorage.getItem("authToken");
+                    if (!token) {
+                        console.log("No auth token found");
+                        return;
+                    }
+                    
+                    const res = await fetch("http://localhost:3000/api/profile", {
+                        method: "GET",
+                        headers: { 
+                            "Authorization": `Bearer ${token}`, 
+                            "Content-Type": "application/json" 
+                        }
+                    });
+                    
+                    const result = await res.json();
+                    if (result.success) {
+                        const user = result.user;
+                        const username = user.username || user.name || "No Name";
+                        dropdownUsername.textContent = username;
+                        dropdownUserEmail.textContent = user.email;
+                        
+                        // Update welcome message
+                        updateWelcomeMessage(username);
+                        
+                        // Update avatars if available
+                        if (user.avatar) {
+                            updateHeaderAvatars(user.avatar);
+                        } else {
+                            // Use default avatar
+                            updateHeaderAvatars('');
+                        }
+                    } else {
+                        console.error(result.message);
+                    }
+                } catch (err) { 
+                    console.error("Profile fetch failed:", err); 
+                }
+            }
+            
+            // Load profile on page load
+            fetchProfile();
+
+            // --- Fetch Items from Database ---
+            const itemListings = document.getElementById('itemListings');
+            const noItemsMessage = document.getElementById('noItemsMessage');
+            const loadingMessage = document.getElementById('loadingMessage');
+            let allItems = [];
+
+            // Function to get item icon based on category
+            function getItemIcon(category) { 
+                const icons = { 
+                    'Electronics':'mobile-alt',
+                    'ID Cards':'id-card',
+                    'Wallets':'wallet',
+                    'Books':'book',
+                    'Clothing':'tshirt',
+                    'Keys':'key' 
+                }; 
+                return icons[category] || 'question-circle'; 
+            }
+
+            // Function to format date
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+            }
+
+            // Function to display items
+            function displayItems(items) { 
+                itemListings.innerHTML = ''; 
+                noItemsMessage.style.display = items.length === 0 ? 'block' : 'none'; 
+                
+                items.forEach((item, index) => { 
+                    const card = document.createElement('div'); 
+                    card.className = 'item-card'; 
+                    
+                    // Check if this item has an image for preview
+                    const hasImage = item.item_image;
+                    const imagePreviewHtml = hasImage ? 
+                        `<div class="item-image-preview" data-image-index="${index}">
+                            <small><i class="fas fa-image"></i> Click to view image</small>
+                        </div>` : '';
+                    
+                    card.innerHTML = `
+                        <div class="item-image">
+                            <i class="fas fa-${getItemIcon(item.category)} fa-3x"></i>
+                        </div>
+                        <div class="item-details">
+                            <span class="item-type ${item.item_type.toLowerCase()}">${item.item_type}</span>
+                            <h3>${item.item_name}</h3>
+                            <p>${item.description}</p>
+                            <div class="item-meta">
+                                <span><i class="fas fa-calendar-alt"></i> ${formatDate(item.date)}</span>
+                                <span><i class="fas fa-map-marker-alt"></i> ${item.location}</span>
+                            </div>
+                            ${imagePreviewHtml}
+                        </div>
+                    `; 
+                    
+                    // Add click event for image preview
+                    if (hasImage) {
+                        const previewElement = card.querySelector('.item-image-preview');
+                        previewElement.addEventListener('click', () => {
+                            openImagePreview(item.item_image);
+                        });
+                    }
+                    
+                    itemListings.appendChild(card); 
+                }); 
+            }
+
+            // Function to fetch items from database
+            async function fetchItemsFromDatabase() {
+                try {
+                    loadingMessage.style.display = 'block';
+                    noItemsMessage.style.display = 'none';
+                    
+                    const response = await fetch('http://localhost:3000/api/items');
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        allItems = result.items;
+                        displayItems(allItems);
+                        updateStatistics(allItems);
+                    } else {
+                        console.error('Failed to fetch items:', result.message);
+                        noItemsMessage.textContent = 'Failed to load items. Please try again later.';
+                        noItemsMessage.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Error fetching items:', error);
+                    noItemsMessage.textContent = 'Error loading items. Please check your connection.';
+                    noItemsMessage.style.display = 'block';
+                } finally {
+                    loadingMessage.style.display = 'none';
+                }
+            }
+
+            // Function to update statistics
+            function updateStatistics(items) {
+                const totalItems = items.length;
+                const claimedItems = items.filter(item => item.status === 'found' || item.status === 'returned').length;
+                const resolvedItems = items.filter(item => item.status === 'returned' || item.status === 'closed').length;
+                
+                document.getElementById('totalItemsCount').textContent = totalItems;
+                document.getElementById('claimedItemsCount').textContent = claimedItems;
+                document.getElementById('resolvedItemsCount').textContent = resolvedItems;
+            }
+
+            // Function to filter items
+            function filterItems() {
+                const searchTerm = document.getElementById('searchKeyword').value.toLowerCase();
+                const typeFilter = document.getElementById('itemTypeFilter').value;
+                const categoryFilter = document.getElementById('categoryFilter').value;
+                
+                const filteredItems = allItems.filter(item => 
+                    (item.item_name.toLowerCase().includes(searchTerm) || 
+                     item.description.toLowerCase().includes(searchTerm)) &&
+                    (typeFilter === '' || item.item_type === typeFilter) &&
+                    (categoryFilter === '' || item.category === categoryFilter)
+                );
+                
+                displayItems(filteredItems);
+            }
+
+            // Initialize the page
+            async function initializePage() {
+                await fetchItemsFromDatabase();
+                
+                // Set up event listeners
+                document.getElementById('searchBtn').addEventListener('click', filterItems);
+                document.getElementById('searchKeyword').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        filterItems();
+                    }
+                });
+                
+                document.getElementById('itemTypeFilter').addEventListener('change', filterItems);
+                document.getElementById('categoryFilter').addEventListener('change', filterItems);
+                
+                document.getElementById('resetFiltersBtn').addEventListener('click', () => { 
+                    document.getElementById('searchKeyword').value = ''; 
+                    document.getElementById('itemTypeFilter').value = ''; 
+                    document.getElementById('categoryFilter').value = ''; 
+                    displayItems(allItems); 
+                });
+            }
+
+            // Start the application
+            initializePage();
+
+            // --- Modals ---
+            const modalBackdrop = document.getElementById('modalBackdrop');
+            const privacyModal = document.getElementById('privacyModal');
+            const serviceModal = document.getElementById('serviceModal');
+            const termsModal = document.getElementById('termsModal');
+            const openPrivacyLink = document.getElementById('privacyLink');
+            const openServiceLink = document.getElementById('serviceLink');
+            const openTermsLink = document.getElementById('termsLink');
+            
+            const openModal = modal => { 
+                if (!modal) return; 
+                modalBackdrop.style.display = 'block'; 
+                modal.style.display = 'block'; 
+                document.body.classList.add('modal-open'); 
+            };
+            
+            const closeModal = () => { 
+                modalBackdrop.style.display = 'none'; 
+                document.body.classList.remove('modal-open'); 
+                privacyModal.style.display = 'none'; 
+                serviceModal.style.display = 'none'; 
+                termsModal.style.display = 'none'; 
+            };
+            
+            openPrivacyLink.addEventListener('click', e => { e.preventDefault(); openModal(privacyModal); });
+            openServiceLink.addEventListener('click', e => { e.preventDefault(); openModal(serviceModal); });
+            openTermsLink.addEventListener('click', e => { e.preventDefault(); openModal(termsModal); });
+            modalBackdrop.addEventListener('click', closeModal);
+            document.querySelectorAll('.modal .close-btn').forEach(btn => btn.addEventListener('click', closeModal));
+            window.addEventListener('keydown', event => { if (event.key === 'Escape') closeModal(); });
+        });
+    </script>
+</body>
+</html>

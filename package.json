@@ -1,0 +1,43 @@
+{
+  "name": "lf",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@emailjs/nodejs": "^5.0.2",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "express-session": "^1.18.2",
+    "firebase-admin": "^13.5.0",
+    "google-auth-library": "^10.4.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "mysql2": "^3.15.2",
+    "nodemailer": "^7.0.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nivesharn/lost-found_hub.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nivesharn/lost-found_hub/issues"
+  },
+  "homepage": "https://github.com/nivesharn/lost-found_hub#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

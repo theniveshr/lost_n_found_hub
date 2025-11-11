@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Lost & Found Portal</title>
+    <link rel="stylesheet" href="a_style.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- admin.js contains specific dashboard logic -->
+    <script src="admin.js" defer></script> 
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-search-location"></i> Lost & Found - Admin Hub
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#"><i class="fas fa-bell"></i></a></li>
+                    <!-- <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li> -->
+                    <!-- Placeholder for Login/Profile link - updated by main.js -->
+                    <li><span id="authNavPlaceholder"></span></li>
+                    <li><a href="login.html"><button id="logoutButton" class="btn btn-secondary">Logout</button></a></li>
+                </ul>
+            </nav>
+            <div class="hamburger-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <main class="container admin-dashboard-page">
+        <section class="dashboard-overview">
+            <h1><i class="fas fa-cogs"></i> Admin Dashboard</h1>
+            <p>Welcome to the administration panel. Manage reported items and claims.</p>
+        </section>
+
+        <section class="admin-panel-section" id="itemManagementSection">
+            <h2><i class="fas fa-box-open"></i> Item Management</h2>
+            <div class="filter-search-section">
+                <div class="search-bar">
+                    <input type="text" id="adminSearchKeyword" placeholder="Search items by name, location..." />
+                    <button class="btn btn-primary" id="adminSearchBtn"><i class="fas fa-search"></i> Search</button>
+                </div>
+                <div class="filters">
+                    <select id="adminItemTypeFilter">
+                        <option value="">All Types</option>
+                        <option value="Lost">Lost</option>
+                        <option value="Found">Found</option>
+                    </select>
+                    <select id="adminItemStatusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="Active">Active</option>
+                        <option value="Claimed">Claimed</option>
+                        <option value="Resolved">Resolved</option>
+                        <option value="Archived">Archived</option> <!-- Added 'Archived' for completeness -->
+                    </select>
+                    <button class="btn btn-outline" id="adminResetFiltersBtn"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table id="adminItemsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Type</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Location</th>
+                            <th>Date</th>
+                            <th>Reporter Email</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="9" class="loading-message">Loading items...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p id="noAdminItemsMessage" class="info-message" style="display:none;">No items found matching your criteria.</p>
+        </section>
+
+        <section class="admin-panel-section" id="claimManagementSection">
+            <h2><i class="fas fa-handshake"></i> Claim Management</h2>
+            <div class="table-responsive">
+                <table id="adminClaimsTable">
+                    <thead>
+                        <tr>
+                            <th>Claim ID</th>
+                            <th>Item Name</th>
+                            <th>Claimant Username</th>
+                            <th>Claim Details</th>
+                            <th>Claimed At</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="7" class="loading-message">Loading claims...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p id="noAdminClaimsMessage" class="info-message" style="display:none;">No claims found.</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 College Lost & Found Hub. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> | <a href="#">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="actionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3 id="modalTitle">Confirm Action</h3>
+            <p id="modalMessage">Are you sure you want to perform this action?</p>
+            <div class="modal-buttons">
+                <button id="confirmActionButton" class="btn btn-primary">Confirm</button>
+                <button id="cancelActionButton" class="btn btn-outline">Cancel</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

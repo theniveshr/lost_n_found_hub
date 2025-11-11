@@ -1,0 +1,243 @@
+.form-page {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align to top */
+    min-height: calc(100vh - 150px); /* Adjust height to fit header/footer */
+    padding: 40px 20px;
+}
+.form-page h3{
+     color: #007BFF; 
+     font-weight: bold; 
+     text-align: center; 
+     text-decoration: underline;
+     font-style: italic;
+}
+
+.login-register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 150px); /* Adjust height for login/register pages */
+    padding: 40px 20px;
+}
+
+.form-section, .form-container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 500px; /* Max width for forms */
+}
+
+.form-section h1, .form-container h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--primary-color);
+    font-size: 2em;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    position: relative; /* For error messages */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="tel"],
+.form-group input[type="date"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1em;
+    color: var(--text-color);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+/* Style for inputs with validation errors */
+.form-group input.error,
+.form-group select.error,
+.form-group textarea.error {
+    border-color: var(--error-color);
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25); /* Red shadow for error */
+}
+
+.form-group .required {
+    color: var(--error-color);
+    font-weight: normal;
+}
+
+.radio-group {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.radio-group input[type="radio"] {
+    display: none; /* Hide default radio button */
+}
+
+.radio-group label {
+    background-color: #f0f0f0;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    border: 1px solid var(--border-color);
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+}
+
+.radio-group label i {
+    margin-right: 8px;
+    color: #888;
+}
+
+.radio-group input[type="radio"]:checked + label {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.radio-group input[type="radio"]:checked + label i {
+    color: white;
+}
+
+.help-text {
+    font-size: 0.85em;
+    color: #777;
+    margin-top: 5px;
+}
+
+/* Error/Success Messages */
+.error-message {
+    color: var(--error-color);
+    font-size: 0.85em;
+    margin-top: 5px;
+    display: none; /* Hidden by default */
+    align-items: center;
+}
+
+.error-message i {
+    margin-right: 5px;
+    font-size: 0.9em;
+}
+
+.success-message {
+    color: var(--success-color);
+    font-size: 0.85em;
+    margin-top: 5px;
+    display: none; /* Hidden by default */
+    align-items: center;
+}
+
+/* Divider for OR */
+.divider {
+    text-align: center;
+    margin: 25px 0;
+    position: relative;
+    font-size: 0.9em;
+    color: #888;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background-color: var(--border-color);
+}
+
+.divider::before {
+    left: 0;
+}
+
+.divider::after {
+    right: 0;
+}
+
+.divider-text {
+    background-color: #fff;
+    padding: 0 10px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Forgot Password / Switch Form Link */
+.forgot-password, .switch-form-text a {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+.forgot-password:hover, .switch-form-text a:hover {
+    text-decoration: underline;
+}
+
+.switch-form-text {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+    font-size: 0.95em;
+}
+
+/* Google Sign-In button specific styling (positioning) */
+#g_id_onload, .g_id_signin {
+    margin: 0 auto 15px auto; /* Center the Google button */
+    width: fit-content; /* Make container fit button size */
+}
+
+/* Adjust button margin for forms */
+.form-section button, .form-container button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px 20px;
+    font-size: 1.1em;
+}
+
+/* Responsive Adjustments for forms */
+@media (max-width: 576px) {
+    .form-section, .form-container {
+        padding: 30px 20px;
+        margin: 0 10px; /* Smaller horizontal margin */
+    }
+    .form-section h1, .form-container h1 {
+        font-size: 1.8em;
+    }
+    .radio-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .radio-group label {
+        width: 100%;
+        justify-content: center; /* Center text in mobile radio buttons */
+    }
+    .divider::before, .divider::after {
+        width: 35%; /* Adjust width of lines */
+    }
+}

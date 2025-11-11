@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In / Sign Up | Lost & Found Hub</title>
+    <link rel="stylesheet" href="style login.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Add EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        /* Add styles for email status messages */
+        .email-status {
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+            padding: 8px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .email-sending {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #bbdefb;
+        }
+        
+        .email-success {
+            background-color: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+        
+        .email-error {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <!-- Sign Up Form -->
+        <div class="form-container sign-up-container">
+            <form action="#" id="signupForm">
+                <h1>Create Account</h1>
+                <br>
+                <br>
+                <div class="input-group">
+                    <input type="text" placeholder="Username" id="username" required aria-label="Username" />
+                    <span class="error-message" id="username-error">Please fill out this field.</span>
+                </div>
+                <div class="input-group">
+                    <input type="email" placeholder="Email" id="email" required aria-label="Email" />
+                    <span class="error-message" id="email-error">Please fill out this field.</span>
+                </div>
+                <div class="input-group">
+                    <input type="password" placeholder="Password" id="password" required aria-label="Password" />
+                    <span class="error-message" id="password-error">Please fill out this field.</span>
+                    <span class="error-message" id="password-strength-error">Password must be 8+ chars, with numbers, capital letters, and symbols.</span>
+                </div>
+                <div class="input-group">
+                    <input type="password" placeholder="Confirm Password" id="confirmPassword" required aria-label="Confirm Password" />
+                    <span class="error-message" id="confirm-error">Please fill out this field.</span>
+                    <span class="success-message" id="match-message">PASSWORD MATCHED</span>
+                    <span class="error-message" id="mismatch-message">Passwords do not match.</span>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="signupTermsCheckbox">
+                    <label for="signupTermsCheckbox">
+                        I agree to the <a href="#" id="signupTermsLink">Terms & Conditions</a> and <a href="#" id="signupPrivacyLink">Privacy Policy</a>
+                    </label>
+                </div>
+                <button type="submit" id="signupButton" disabled>Sign Up</button>
+                
+                <!-- Email Status Messages -->
+                <!-- <div class="email-status email-sending" id="emailSendingMessage">
+                    <i class="fas fa-spinner fa-spin"></i> Sending welcome email...
+                </div>
+                <div class="email-status email-success" id="emailSuccessMessage">
+                    <i class="fas fa-check-circle"></i> Welcome email sent successfully!
+                </div> -->
+                <!-- <div class="email-status email-error" id="emailErrorMessage">
+                    <i class="fas fa-exclamation-triangle"></i> Account created, but welcome email failed. Check your email settings.
+                </div> -->
+                
+                <div class="divider"><span class="divider-text">OR</span></div>
+                <div id="g_id_signup"></div>
+            </form>
+        </div>
+
+        <!-- Rest of your HTML remains the same -->
+        <!-- Sign In Form -->
+        <div class="form-container sign-in-container">
+            <form action="#" id="signinForm">
+                <h1>Sign in</h1>
+                <br>
+                <br>
+                <div class="input-group">
+                    <input type="email" placeholder="Email" id="signinEmail" required aria-label="Email" />
+                    <span class="error-message" id="signinEmail-error">Please fill out this field.</span>
+                </div>
+                <div class="input-group">
+                    <input type="password" placeholder="Password" id="signinPassword" required aria-label="Password" />
+                    <span class="error-message" id="signinPassword-error">Please fill out this field.</span>
+                </div>
+                <a href="reset-password.html" class="forgot-password">Forgot your password?</a>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="signinTermsCheckbox">
+                    <label for="signinTermsCheckbox">
+                        I agree to the <a href="#" id="signinTermsLink">Terms & Conditions</a> and <a href="#" id="signinPrivacyLink">Privacy Policy</a>
+                    </label>
+                </div>
+                <button type="submit" id="signinButton" disabled>Sign In</button>
+                <div class="divider"><span class="divider-text">OR</span></div>
+                <div id="g_id_signin"></div>
+            </form>
+        </div>
+
+        <!-- Overlay and modals remain the same -->
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <div class="logo">
+                        <img src="lost_logo.png" alt="Lost & Found Hub Logo" class="form-image" />
+                        <h2>Lost & Found Hub</h2>
+                        <p style="font-weight: 900;">Reuniting people with their belongings</p>
+                    </div>
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected, please login with your personal info</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <div class="logo">
+                    <img src="lost_logo.png" alt="Lost & Found Hub Logo" class="form-image" />
+                    <h2>Lost & Found Hub</h2>
+                    <p style="font-weight: 900;">Reuniting people with their belongings</p>
+                </div>
+                    <h1>Hello, Friend!</h1>
+                    <p>Enter your personal details and start your journey with us</p>
+                    <button class="ghost" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms & Conditions Modal -->
+    <div class="modal" id="termsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Lost & Found Hub - Terms & Conditions</h3>
+                <button class="close-btn" id="closeTerms">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4>1. Acceptance of Terms</h4>
+                <p>By accessing and using Lost & Found Hub, you accept and agree to be bound by these Terms & Conditions. Our platform connects people who have lost items with those who have found them.</p>
+                
+                <h4>2. User Responsibilities</h4>
+                <p>As a user of Lost & Found Hub, you agree to:
+                    <ul>
+                        <li>Provide accurate information about lost or found items</li>
+                        <li>Respond promptly to legitimate inquiries about your listings</li>
+                        <li>Treat other users with respect and courtesy</li>
+                        <li>Not list prohibited or illegal items</li>
+                        <li>Verify ownership before returning found items</li>
+                    </ul>
+                </p>
+                
+                <h4>3. Item Listings and Verification</h4>
+                <p>Lost & Found Hub serves as a connection platform only. We do not:
+                    <ul>
+                        <li>Verify the accuracy of user listings</li>
+                        <li>Guarantee the return of lost items</li>
+                        <li>Take possession of any lost or found items</li>
+                        <li>Mediate disputes between users</li>
+                    </ul>
+                    Users are responsible for verifying ownership through reasonable means before transferring items.
+                </p>
+                
+                <h4>4. Prohibited Items</h4>
+                <p>You may not list the following items on our platform:
+                    <ul>
+                        <li>Weapons, firearms, or ammunition</li>
+                        <li>Illegal substances or drugs</li>
+                        <li>Hazardous materials</li>
+                        <li>Stolen property</li>
+                        <li>Perishable items</li>
+                        <li>Animals or pets</li>
+                    </ul>
+                </p>
+                
+                <h4>5. Safe Exchange Guidelines</h4>
+                <p>For your safety, we recommend:
+                    <ul>
+                        <li>Meeting in public, well-lit areas</li>
+                        <li>Bringing a friend or family member</li>
+                        <li>Verifying the item matches the description</li>
+                        <li>Not sharing personal financial information</li>
+                        <li>Reporting suspicious activity to local authorities</li>
+                    </ul>
+                </p>
+                
+                <h4>6. Limitation of Liability</h4>
+                <p>Lost & Found Hub is not responsible for:
+                    <ul>
+                        <li>Items that are not returned or claimed</li>
+                        <li>Misrepresentation of items by users</li>
+                        <li>User interactions or exchanges</li>
+                        <li>Damages or losses resulting from platform use</li>
+                        <li>Technical issues that may temporarily limit access</li>
+                    </ul>
+                </p>
+                
+                <h4>7. Account Termination</h4>
+                <p>We reserve the right to suspend or terminate accounts that:
+                    <ul>
+                        <li>Violate these terms and conditions</li>
+                        <li>Engage in fraudulent or suspicious activity</li>
+                        <li>Harass other users</li>
+                        <li>Repeatedly post inaccurate information</li>
+                    </ul>
+                </p>
+                
+                <h4>8. Changes to Terms</h4>
+                <p>We may update these Terms & Conditions periodically. Continued use of Lost & Found Hub after changes constitutes acceptance of the modified terms.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Privacy Policy Modal -->
+    <div class="modal" id="privacyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Lost & Found Hub - Privacy Policy</h3>
+                <button class="close-btn" id="closePrivacy">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4>Information We Collect</h4>
+                <p>To provide our lost and found matching services, we collect:
+                    <ul>
+                        <li>Account information (name, email, contact details)</li>
+                        <li>Item descriptions and photos you choose to share</li>
+                        <li>Location data to help match lost and found items geographically</li>
+                        <li>Communication history between users regarding items</li>
+                        <li>Technical data (IP address, browser type, device information)</li>
+                    </ul>
+                </p>
+                
+                <h4>How We Use Your Information</h4>
+                <p>We use collected information to:
+                    <ul>
+                        <li>Match lost items with found items in your area</li>
+                        <li>Facilitate communication between users</li>
+                        <li>Improve our matching algorithms and user experience</li>
+                        <li>Send notifications about potential matches</li>
+                        <li>Ensure platform security and prevent fraud</li>
+                        <li>Comply with legal obligations</li>
+                    </ul>
+                </p>
+                
+                <h4>Item Information Sharing</h4>
+                <p>To help reunite items with their owners, we may share:
+                    <ul>
+                        <li>Item descriptions and photos with other users in your area</li>
+                        <li>General location data (neighborhood/city level, not exact addresses)</li>
+                        <li>Contact method you choose to share (platform messaging or provided contact info)</li>
+                    </ul>
+                    We never share your exact address, phone number, or personal financial information without your explicit consent.
+                </p>
+                
+                <h4>Data Security</h4>
+                <p>We implement security measures to protect your information:
+                    <ul>
+                        <li>Encryption of sensitive data in transit and at rest</li>
+                        <li>Regular security assessments and updates</li>
+                        <li>Limited employee access to user data</li>
+                        <li>Secure authentication procedures</li>
+                    </ul>
+                </p>
+                
+                <h4>Your Privacy Choices</h4>
+                <p>You can:
+                    <ul>
+                        <li>Adjust visibility settings for your listings</li>
+                        <li>Choose which contact methods to share</li>
+                        <li>Delete your account and associated data</li>
+                        <li>Opt-out of non-essential communications</li>
+                        <li>Request access to your personal data</li>
+                    </ul>
+                </p>
+                
+                <h4>Location Data</h4>
+                <p>We use location information to:
+                    <ul>
+                        <li>Show relevant lost and found items in your area</li>
+                        <li>Improve matching accuracy</li>
+                        <li>Provide location-based notifications</li>
+                    </ul>
+                    You can control location sharing through your device settings and our app permissions.
+                </p>
+                
+                <h4>Data Retention</h4>
+                <p>We retain your information:
+                    <ul>
+                        <li>While your account is active</li>
+                        <li>For resolved item listings: 90 days after resolution</li>
+                        <li>For unresolved listings: Until you delete them or 1 year</li>
+                        <li>As required by law for legal compliance</li>
+                    </ul>
+                </p>
+                
+                <h4>Changes to Privacy Policy</h4>
+                <p>We will notify users of significant changes to our privacy practices. Continued use of Lost & Found Hub after changes constitutes acceptance of the updated policy.</p>
+                
+                <h4>Contact Us</h4>
+                <p>For privacy-related questions or concerns, please contact our privacy team at privacy@lostfoundhub.com</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="login.js"></script>
+    
+</body>
+</html> 
